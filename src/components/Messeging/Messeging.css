@@ -87,3 +87,11 @@
   position: absolute;
   right: 0;
 }
+
+.me {
+  color: green;
+}
+
+.other_user {
+  color: blue;
+}

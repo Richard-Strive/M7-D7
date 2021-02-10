@@ -16,27 +16,60 @@ let socket = io("https://striveschool-api.herokuapp.com", connOps);
 // creare la variabile con la connessione tramite "io" e passando l'url e la connOps. In questo modo preparimao la varibaile per la connesione.
 
 function Messeging() {
-  const [list, setList] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [userName, setUserName] = useState("idiot");
+
+  const [list, setList] = useState([]);
   const [user, setUser] = useState("");
   const [messages, setMessages] = useState([]);
-  const [data, setData] = useState([]);
   const [message, setMessage] = useState("");
 
+  const [sigleMsg, setSinleMsg] = useState("");
+
+  const getPvMsg = async () => {
+    try {
+      const resp = await fetch(
+        "https://striveschool-api.herokuapp.com/api/messages/idiot"
+      );
+
+      if (resp.ok) {
+        const messaggi = await resp.json();
+        setMessages(messaggi);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const userMsg = messages.filter((ms1) => ms1.from === user);
+
+  useEffect(() => {
+    socket.on("list", (list) => setList(list));
+    //il primo paramtro ("list") e' un metodo e la fuzione prende il metodo stesso per ritornare qualcosa cioe la lista di users.
+
+    socket.emit("setUsername", {
+      username: userName,
+    });
+
+    getPvMsg();
+    //Setta i dati
+    //PER SETTARE MESSAGI VECCHI DI UN UTENTE
+
+    socket.on("chatmessage", (msg) =>
+      setMessages((messages) => messages.concat(msg))
+    );
+    //con questa parte di codice sto dicendo HEI SOCKET AGGIUNGI IL MIO MESSAGIO CHE INVIO ALLA LISTA DI MESSAGGI IN TEMPO REALE
+
+    // console.log(userMsg);
+    // console.log("messages--->", messages);
+    socket.on("connect", () => console.log("CONNECTED BRO!!!"));
+  }, [messages, list]);
+
   // useEffect(() => {
-  //   socket.on("list", (list) => setList(list));
-  //   //il primo paramtro ("list") e' un metodo e la fuzione prende il metodo stesso per ritornare qualcosa cioe la lista di users.
-
-  //   // socket.emit("setUsername", {
-  //   //   username: "scaredasfuck",
-  //   // });
-
-  //   // socket.emit("chatmessage", {
-  //   //   to: "vaneCat",
-  //   //   text: "HEY VANESSA. IT'S ME!!",
-  //   // });
-
-  //   socket.on("connect", () => console.log("CONNECTED BRO!!!"));
-  // }, []);
+  //   socket.on("chatmessage", (msg) =>
+  //     setMessages((messages) => messages.concat(msg))
+  //   );
+  //   getPvMsg();
+  // }, [messages]);
 
   /**
    * 
@@ -53,32 +86,23 @@ function Messeging() {
     */
   // console.log(list);
 
-  // const getPvMsg = async () => {
-  //   try {
-  //     const resp = await fetch(
-  //       "https://striveschool-api.herokuapp.com/api/messages/Richard"
-  //     );
-
-  //     if (resp.ok) {
-  //       const data = await resp.json();
-  //       setData(data);
-  //       console.log(data);
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
   //
   // console.log(data);
-  // getPvMsg();
 
-  const handleSubmit = (e, user, message) => {
-    socket.emit("chatmessage", {
-      to: user,
-      text: message,
-    });
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (message !== "") {
+      socket.emit("chatmessage", {
+        to: user,
+        text: message,
+      });
+    }
+
+    setMessage("");
+
+    // setMessage
+    console.log("Hello it's my function");
   };
 
   return (
@@ -87,18 +111,35 @@ function Messeging() {
         <div className="messaging_list_user">
           <div className="messaging_list_header">MESSAGING WITH SOME ICONS</div>
           {list.map((n) => (
-            <UserMessage onClick={() => console.log("Hello")} />
+            <UserMessage user={n} setUser={setUser} />
           ))}
         </div>
         <div className="current_message">
           <div className="current_message_header">
-            {" "}
-            SELECTED USER MESSAGE <br />
+            {user}
+            <br />
             <small style={{ color: "gray" }}>some time infos and an icon</small>
-            <div className="current_message_display">
-              <div className="messages">somehing</div>
+            <Form onSubmit={(e) => handleSubmit(e)}>
+              <div className="current_message_display">
+                <div className="messages">
+                  <ul>
+                    {messages
+                      .filter((ms1) => ms1.from === user)
+                      .map((msg) => (
+                        <li className={msg.from === user ? "other_user" : "me"}>
+                          {msg.text}
+                        </li>
+                      ))}
+                    {messages
+                      .filter((ms1) => ms1.to === user)
+                      .map((msg) => (
+                        <li className={msg.to === user ? "me" : "mt-2"}>
+                          {msg.text}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
 
-              <Form>
                 <Form.Group controlId="exampleForm.ControlTextarea1">
                   <Form.Control
                     className="the_current_input"
@@ -109,12 +150,16 @@ function Messeging() {
                     onChange={(e) => setMessage(e.target.value)}
                   />
                 </Form.Group>
-              </Form>
-            </div>
+              </div>
+              <Button
+                variant="primary"
+                type="submit"
+                className="submit_message"
+              >
+                Primary
+              </Button>
+            </Form>
           </div>
-          <Button variant="primary" type="submit" className="submit_message">
-            Primary
-          </Button>
         </div>
       </div>
     </div>
