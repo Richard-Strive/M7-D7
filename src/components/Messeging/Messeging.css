@@ -1,8 +1,89 @@
-.chat_containar {
+.messaging_containar {
   height: 100vh;
-  background-color: lightblue;
+  background-color: lightgray;
+  position: relative;
+}
+.messaging_main {
+  width: 65%;
+  height: 80%;
+  /* background-color: lightsalmon; */
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  display: flex;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid gray;
 }
 
-.form_with_input {
-  padding-top: 37em;
+.messaging_list_user {
+  width: 35%;
+  height: 100%;
+  background-color: white;
+  overflow: scroll;
+  border-right: 1px solid gray;
+}
+
+.current_message {
+  height: 100%;
+  width: 65%;
+  background-color: white;
+  position: relative;
+}
+
+.messaging_list_header {
+  background-color: white;
+
+  height: 10%;
+  width: 100%;
+  border-bottom: 1px solid grey;
+}
+
+.current_message_header {
+  background-color: white;
+
+  border-bottom: 1px solid gray;
+
+  width: 100%;
+}
+
+.current_message_display {
+  margin-top: 4px;
+  height: 50vh;
+  background-color: white;
+
+  position: relative;
+  border: 1px solid gray;
+}
+
+/* Form {
+  position: absolute;
+  bottom: 0;
+  background-color: navy;
+  width: 100%;
+} */
+.messages {
+  height: 100%;
+  padding-top: 1px;
+  overflow: scroll;
+  background-color: violet;
+}
+
+.the_current_input {
+  border: 1px solid gray;
+  position: absolute;
+  bottom: 0;
+  border: none;
+}
+.the_current_input:focus {
+  /* border: none; */
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-top: 4px solid green;
+}
+
+.submit_message {
+  position: absolute;
+  right: 0;
 }

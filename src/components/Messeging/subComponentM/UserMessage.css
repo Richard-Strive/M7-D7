@@ -1,0 +1,13 @@
+.user_container {
+  display: flex;
+  /* background-color: yellow; */
+  width: 100%;
+  cursor: pointer;
+}
+
+.user_img {
+  border-radius: 100%;
+  width: 80px;
+  height: 50px;
+  overflow: hidden;
+}
